@@ -1,3 +1,7 @@
+## For Others; Graders please take note:
+
+Please do not copy my code line-for-line.  Thank you.
+
 ## Shopping List Starter
 
 Created for the Thinkful EI Program.

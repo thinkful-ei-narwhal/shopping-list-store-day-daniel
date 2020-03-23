@@ -15,6 +15,10 @@ const store = {
 };
 
 const generateItemElement = function (item) {
+  if (store.newName) {
+    item.name = store.newName;
+    store.newName = '';
+  }
   let itemTitle = `<span class='shopping-item shopping-item__checked'>${item.name}</span>`;
   if (!item.checked) {
     itemTitle = `
@@ -25,14 +29,12 @@ const generateItemElement = function (item) {
   return `
     <li class='js-item-element' data-item-id='${item.id}'>
       ${itemTitle}
-      <div class='changename'>
-        <form>
-          <label for="newname">New Name:</label><br>
-          <input type="text" id="newname" name="newname" placeholder="e.g., cabbage">
-          <input type="submit" class='change-name' value="Change Item Name">
-        </form>
-      </div>
       <div class='shopping-item-controls'>
+        <form id="js-change-name-form">
+          <label for="item-name-change">New Name:</label><br>
+          <input type="text" name="item-name-change" class="js-item-name-change" placeholder="e.g., cabbage">
+          <button type="submit">change name</button>
+        </form>
         <button class='shopping-item-toggle js-item-toggle'>
           <span class='button-label'>check</span>
         </button>
@@ -107,13 +109,16 @@ const handleItemCheckClicked = function () {
 };
 
 const handleSubmitNewName = function () {
-  $('.js-shopping-list').on('submit', '.change-name', event => {
+  $('.js-shopping-list').on('submit', '#js-change-name-form', event => {
     event.preventDefault();
-    const val = event.currentTarget.first().val();
+    const item = getItemIdFromElement(event.currentTarget);
+    const val = $('.js-item-name-change').val();
+    $('.js-item-name-change').val('');
     if (val) {
       store.newName = val;
     }
     render();
+    return item;
   });
 };
 
@@ -187,6 +192,7 @@ const handleShoppingList = function () {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
+  handleSubmitNewName();
   handleToggleFilterClick();
 };
 
