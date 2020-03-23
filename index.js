@@ -15,10 +15,6 @@ const store = {
 };
 
 const generateItemElement = function (item) {
-  if (store.newName) {
-    item.name = store.newName;
-    store.newName = '';
-  }
   let itemTitle = `<span class='shopping-item shopping-item__checked'>${item.name}</span>`;
   if (!item.checked) {
     itemTitle = `
@@ -81,16 +77,17 @@ const addItemToShoppingList = function (itemName) {
   store.items.push({ id: cuid(), name: itemName, checked: false });
 };
 
-const changeItemName = function (itemName) {
-  store.newName = itemName;
+const changeItemName = function (id, newItemName) {
+  const foundItem = store.items.find(item => item.id === id);
+  foundItem.name = newItemName;
 };
 
 const handleNewItemSubmit = function () {
   $('#js-shopping-list-form').submit(function (event) {
     event.preventDefault();
+    const id = getItemIdFromElement(event.currentTarget);
     const newItemName = $('.js-shopping-list-entry').val();
-    $('.js-shopping-list-entry').val('');
-    addItemToShoppingList(newItemName);
+    addItemToShoppingList(id, newItemName);
     render();
   });
 };
@@ -99,6 +96,7 @@ const toggleCheckedForListItem = function (id) {
   const foundItem = store.items.find(item => item.id === id);
   foundItem.checked = !foundItem.checked;
 };
+
 
 const handleItemCheckClicked = function () {
   $('.js-shopping-list').on('click', '.js-item-toggle', event => {
@@ -113,12 +111,10 @@ const handleSubmitNewName = function () {
     event.preventDefault();
     const item = getItemIdFromElement(event.currentTarget);
     const val = $('.js-item-name-change').val();
-    $('.js-item-name-change').val('');
-    if (val) {
-      store.newName = val;
-    }
+    console.log(val);
+    console.log(item);
     render();
-    return item;
+    changeItemName(item, val);
   });
 };
 
