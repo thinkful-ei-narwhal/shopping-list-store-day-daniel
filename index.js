@@ -1,3 +1,8 @@
+'use strict';
+
+
+// User can edit the title of an item.
+
 const store = {
   items: [
     { id: cuid(), name: 'apples', checked: false },
@@ -5,7 +10,8 @@ const store = {
     { id: cuid(), name: 'milk', checked: true },
     { id: cuid(), name: 'bread', checked: false }
   ],
-  hideCheckedItems: false
+  hideCheckedItems: false,
+  newName: ''
 };
 
 const generateItemElement = function (item) {
@@ -19,6 +25,13 @@ const generateItemElement = function (item) {
   return `
     <li class='js-item-element' data-item-id='${item.id}'>
       ${itemTitle}
+      <div class='changename'>
+        <form>
+          <label for="newname">New Name:</label><br>
+          <input type="text" id="newname" name="newname" placeholder="e.g., cabbage">
+          <input type="submit" class='change-name' value="Change Item Name">
+        </form>
+      </div>
       <div class='shopping-item-controls'>
         <button class='shopping-item-toggle js-item-toggle'>
           <span class='button-label'>check</span>
@@ -66,6 +79,10 @@ const addItemToShoppingList = function (itemName) {
   store.items.push({ id: cuid(), name: itemName, checked: false });
 };
 
+const changeItemName = function (itemName) {
+  store.newName = itemName;
+};
+
 const handleNewItemSubmit = function () {
   $('#js-shopping-list-form').submit(function (event) {
     event.preventDefault();
@@ -85,6 +102,17 @@ const handleItemCheckClicked = function () {
   $('.js-shopping-list').on('click', '.js-item-toggle', event => {
     const id = getItemIdFromElement(event.currentTarget);
     toggleCheckedForListItem(id);
+    render();
+  });
+};
+
+const handleSubmitNewName = function () {
+  $('.js-shopping-list').on('submit', '.change-name', event => {
+    event.preventDefault();
+    const val = event.currentTarget.first().val();
+    if (val) {
+      store.newName = val;
+    }
     render();
   });
 };
